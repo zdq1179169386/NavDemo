@@ -13,6 +13,9 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet ZDQ_TableViewHeader *tableHeader;
 
+/** <#label#> */
+@property(nonatomic,strong) ZDQ_TableViewHeaderManager * manager;
+
 @end
 
 @implementation ZDQ_ViewController
@@ -23,10 +26,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    ZDQ_TableViewHeader * hader = [[ZDQ_TableViewHeader alloc] initWithFrame:CGRectMake(0, 0,  [UIScreen mainScreen].bounds.size.width,0)];
-    self.tableView.tableHeaderView = hader;
-    self.tableView.tableHeaderView.frame = CGRectMake(0, 0, 0, 180);
-    self.tableHeader = hader;
+
     self.title = @"我是导航栏";
     
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -40,6 +40,11 @@
     UIBarButtonItem * item = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.rightBarButtonItem = item;
 
+    
+    ZDQ_TableViewHeaderManager * manager = [[ZDQ_TableViewHeaderManager alloc] init];
+    [manager creatTableHeaderManager:self.tableView];
+    
+    self.manager = manager;
 }
 -(void)setNavbarBackgroundHidden:(BOOL)hidden
 {
@@ -55,7 +60,7 @@
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
 //    NSLog(@"%lf",scrollView.contentOffset.y);
-//    [self.tableHeader scrollViewDidScroll:scrollView];
+    [self.manager scrollViewDidScroll:scrollView];
     if (scrollView.contentOffset.y<64) {
         [self setNavbarBackgroundHidden:YES];
     }else
@@ -83,7 +88,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
     }
-    
+    cell.textLabel.text = [NSString stringWithFormat:@"%ld",indexPath.row];
     return cell;
 }
 
